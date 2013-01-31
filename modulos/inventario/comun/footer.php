@@ -1,0 +1,1 @@
+<img src="../../imagenes/footer_inventario.jpg">

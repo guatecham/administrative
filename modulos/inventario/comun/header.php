@@ -1,0 +1,1 @@
+<img src="../../imagenes/logo_inventario.jpg">

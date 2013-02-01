@@ -9,7 +9,7 @@ a:hover {
 
 <?php
 $titulo = "";
-switch ($submodulo) {
+switch ($s) {
 	case 1: // 
 		$segmento = "reportediario.php";
 		$titulo = "Reporte diario";
@@ -20,5 +20,5 @@ switch ($submodulo) {
 		break;			
 } // end switch
 ?>
-<h2><a href="../../inicio.php">Inicio</a> -> <?php echo $titulo ?></h2>
+<p><a href="../../inicio.php">Inicio</a> -> <?php echo $titulo ?></p>
 <?php include ($segmento); ?>

@@ -4,7 +4,7 @@ switch ($active) {
         include ('modulos/inventario/main.php');
         break;
     case 5:
-	include ('modulos/salida.php');
+	include ('scripts/salida.php');
 	break;
 } // end switch
 

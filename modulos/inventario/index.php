@@ -1,10 +1,10 @@
 <?php
 include('../../utilidades/conex.php');
 include('../../seguridad_sistema/seguridad.php');
-if (isset($_REQUEST["submodulo"])) {
-	$submodulo = $_REQUEST["submodulo"];	
+if (isset($_REQUEST["s"])) {
+	$s = $_REQUEST["s"];	
 } else {
-	$submodulo = 1;
+	$s = 1;
 } 
 ?>
 
@@ -12,7 +12,7 @@ if (isset($_REQUEST["submodulo"])) {
 <html lang="us">
 <head>
 	<meta charset="utf-8">
-	<title>Cremeria La Oriental</title>
+	<title> Inventario - Cremeria La Oriental</title>
 	
 	<! 960gs>
 	<link rel="stylesheet" href="../../css/reset.css" />
@@ -20,14 +20,32 @@ if (isset($_REQUEST["submodulo"])) {
 	<link rel="stylesheet" href="../../css/960_24_col.css" />
 	<! /960gs>
 	
-	<link href="../jquery/css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet">
+	<link href="../../jquery/css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet">
 	
 	<script src="../../jquery/js/jquery-1.9.0.js"></script>
 	<script src="../../jquery/js/jquery-ui-1.10.0.custom.js"></script>
 	
 	<script>
 	$(function() {
-				
+            $( "#fecha" ).datepicker({
+	        dayNamesMin: [ "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa" ],
+	        monthNames: [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" ],
+			monthNamesShort: [ "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" ],
+	        dateFormat: "dd/mm/yy",
+	        defaultDate: "+1w",
+	        changeMonth: true,
+	        numberOfMonths: 1
+		});
+        
+        // Hover states on the static widgets
+		$( "#dialog-link, #icons li" ).hover(
+			function() {
+				$( this ).addClass( "ui-state-hover" );
+			},
+			function() {
+				$( this ).removeClass( "ui-state-hover" );
+			}
+		);			
 	});
 	</script>
 

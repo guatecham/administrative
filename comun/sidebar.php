@@ -34,8 +34,8 @@ function escoge(id) {
 	<h3><a href="#" onclick="escoge(0);">Inventario</a></h3>
 	<div>
 	<ul id="navi">
-		<li><a href="modulos/inventario/index.php?submodulo=1">Reporte diario</a></li>
-		<li><a href="modulos/inventario/index.php?submodulo=2">Hoja de ruta</a></li>
+		<li><a href="modulos/inventario/index.php?s=1">Reporte diario</a></li>
+		<li><a href="modulos/inventario/index.php?s=2">Hoja de ruta</a></li>
 	</div>	
 	<h3><a href="#" onclick="escoge(1);">RRHH</a></h3>
 	<div>&nbsp;</div>

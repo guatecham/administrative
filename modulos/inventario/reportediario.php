@@ -1,267 +1,152 @@
 <?php
-// !Funciones
-?>
-<script language="javascript">
-function validar_extras(a) {
-	
-	total = 0;
-	for (i=0;i<3;i++) {
-		if (isNaN(document.getElementById(a + '_qty_' + i).value) || document.getElementById(a + '_qty_' + i).value < 0) {
-			alert('Los montos deben ser numeros mayores que 0');
-			document.getElementById(a + '_qty_' + i).value = 0;
-			document.getElementById(a + '_qty_' + i).focus();
-			return 0;
-		} else {
-			total+=parseInt(document.getElementById(a + '_qty_' + i).value);
-		}
-	} // end for
-	document.getElementById('total_' + a).innerText = total;
-	
-	
-} // end function
+if (isset($_REQUEST["sucursal"])) {
+	$sucursal = $_REQUEST["sucursal"];
+} else {
+	$sucursal = 0;
+	}
 
-function sumar_arqueo(a) {
-	
-//	alert(a);
+if ($sucursal != 0) {
+	$sql="SELECT * FROM inf_sucursales WHERE id_sucursal = $sucursal";
+	$rs=mysql_query($sql,$db);
+	$row=mysql_fetch_object($rs);
+	$titulo_sucursal = $row->nombre;
 
-	total = 0;
-	if (isNaN(document.getElementById('txt_' +a).value) || document.getElementById('txt_' + a).value < 0) {
-		alert('Los montos de las monedas deben ser numeros mayores que 0');
-		document.getElementById('txt_' + a).value = 0;
-		document.getElementById('txt_' + a).focus();
-		return 0;
-	} else {
-		total=parseInt(document.getElementById('txt_doscientos').value) * 200;
-		total+=parseInt(document.getElementById('txt_cien').value) * 100;
-		total+=parseInt(document.getElementById('txt_cincuenta').value) * 50;
-		total+=parseInt(document.getElementById('txt_veinte').value) * 20;
-		total+=parseInt(document.getElementById('txt_diez').value) * 10;
-		total+=parseInt(document.getElementById('txt_cinco').value) * 5;
-		total+=parseInt(document.getElementById('txt_uno').value);
-		total+=parseInt(document.getElementById('txt_moneda').value);																		
+} else {
+	$titulo_sucursal = "[Seleccione tienda]";
+}
+
+if (isset($_REQUEST["fecha"])) {
+	$fecha = $_REQUEST["fecha"];
+} else {
+	$fecha = date('d/m/Y');
+}
+
+$aux = explode("/",$fecha);
+$fechaSQL = $aux[2]."-".$aux[1]."-".$aux[0];
+$sql= "SELECT * FROM data_diario WHERE fecha = '$fechaSQL' AND sucursal = $sucursal";
+$rs=mysql_query($sql,$db);
+$row=mysql_fetch_object($rs);
+if (mysql_num_rows($rs) == 0) { // Se ingresa
 	
-		document.getElementById('lbl_doscientos').innerText = parseInt(document.getElementById('txt_doscientos').value) * 200;
-		document.getElementById('lbl_cien').innerText = parseInt(document.getElementById('txt_cien').value) * 100;
-		document.getElementById('lbl_cincuenta').innerText = parseInt(document.getElementById('txt_cincuenta').value) * 50;
-		document.getElementById('lbl_veinte').innerText = parseInt(document.getElementById('txt_veinte').value) * 20;
-		document.getElementById('lbl_diez').innerText = parseInt(document.getElementById('txt_diez').value) * 10;
-		document.getElementById('lbl_cinco').innerText = parseInt(document.getElementById('txt_cinco').value) * 5;
-		document.getElementById('lbl_uno').innerText = document.getElementById('txt_uno').value;
-		document.getElementById('lbl_moneda').innerText = document.getElementById('txt_moneda').value;
-		
+	$variable = array('VendedorTitular', 'VendedorRotativa'); 
+	foreach ($variable as $nombre_campo ) {
+		$asignacion = "\$" . $nombre_campo . "='';";
+		eval($asignacion); 
 	}
 	
-	document.getElementById('lbl_total_arqueo').innerText = total;
-
+	$variable=array('BilleteDoscientos', 'BilleteCien', 'BilleteCincuenta','BilleteVeinte', 'BilleteDiez', 'BilleteCinco', 'BilleteUno', 'Moneda');
+	foreach ($variable as $nombre_campo ) {
+		$asignacion = "\$" . $nombre_campo . " = 0;";
+		eval($asignacion); 
+	}
 	
-} // end function
-</script>
+	$extra = array ('cortes','reventas','otros');
+	foreach ($extra as $e) {
+		for ($i=0;$i<3;$i++) {
+			$asignacion = "\$" . $e . "_txt_" . $i . "='';";
+			eval($asignacion); 
+			
+			$asignacion = "\$" . $e . "_qty_" . $i . "='';";
+			eval($asignacion); 			
+		} // end for
+	} // end foreach
+
+	$sql="SELECT * FROM inf_productos ORDER BY id_producto";
+	$rs_aux = mysql_query($sql,$db);
+	while ($row_aux = mysql_fetch_object($rs_aux)) {
+		
+		$campos = array('inicial', 'entrada', 'salida', 'cambio', 'final');
+		foreach ($campos as $c) {	
+			$asignacion = "\$" . "txt_" . $c . "_" . $row_aux->id_producto ."=0;";
+			eval($asignacion); 
+		} // end foreach				
+	} // end while
+	
+	
+} else { // Ya existe, se recuperan los datos y se asignan a variables
+
+	$variable = array('VendedorTitular', 'VendedorRotativa'); 
+	foreach ($variable as $nombre_campo ) {
+		$asignacion = "\$" . $nombre_campo . "=\$"."row->".$nombre_campo.";";
+		eval($asignacion); 
+	}
+	
+	$variable=array('BilleteDoscientos', 'BilleteCien', 'BilleteCincuenta','BilleteVeinte', 'BilleteDiez', 'BilleteCinco', 'BilleteUno', 'Moneda');
+	foreach ($variable as $nombre_campo ) {
+		$asignacion = "\$" . $nombre_campo . "=\$"."row->".$nombre_campo.";";
+		eval($asignacion); 
+	}
+	
+	for ($t=1;$t<=3;$t++) {
+		$tipo = array('cortes', 'reventas', 'otros');
+		$sql = "SELECT * FROM data_sub2_diario WHERE reporte = $row->id_reporte AND tipo = $t";
+		$rs_aux=mysql_query($sql,$db);
+		$t_aux=$t-1;
+	
+		if (mysql_num_rows($rs_aux) > 0) {
+				$i=0;
+			while ($row_aux = mysql_fetch_object($rs_aux)) {
+				$asignacion = "\$" . $tipo[$i+1] . "_txt_" . $t_aux . "=\$"."row_aux->recibe;";
+				$asignacion = "\$" . $tipo[$i+1] . "_qty_" . $t_aux . "=\$"."row_aux->monto;";
+				eval($asignacion);
+				$i++;
+			} // end while
+		} else {
+			for ($i=0;$i<3;$i++) {
+				$asignacion = "\$" . $tipo[$i] . "_txt_" . $t_aux . "='';";
+				//echo $asignacion."<br>";
+				eval($asignacion); 
+			
+				$asignacion = "\$" . $tipo[$i] . "_qty_" . $t_aux . "='';";
+				//echo $asignacion."<br>";
+				eval($asignacion); 
+			} // end for	
+		} // end if-else	
+		
+	} // end for
+	
+	$sql="SELECT * FROM inf_productos ORDER BY id_producto";
+	$rs_aux = mysql_query($sql,$db);
+	while ($row_aux = mysql_fetch_object($rs_aux)) {
+			
+		$campos = array('inicial', 'entrada', 'salida', 'cambio', 'final');
+		foreach ($campos as $c) {	
+			$sql="SELECT * FROM data_sub1_diario WHERE reporte = $row->id_reporte AND producto = $row_aux->id_producto";
+			$rs_aux2 = mysql_query($sql,$db);
+			if (mysql_num_rows($rs_aux2) > 0) {
+				$row_aux2 = mysql_fetch_object($rs_aux2);
+				$asignacion = "\$" . "txt_" . $c . "_" . $row_aux->id_producto . "=\$"."row_aux2->".$c.";";				 
+			} else {
+				$asignacion = "\$" . "txt_" . $c . "_" . $row_aux->id_producto . "=0;";
+			} // end if-else
+			eval($asignacion);
+		} // end foreach				
+	} // end while
+			
+} // end if
+?>
+<script type="text/javascript" src="comun/funciones.js"></script>
+<div class="grid_24 ui-state-highlight ui-corner-all" style="margin-top: 10px; margin-bottom: 10px; padding: 0.9em;">
+<form action="index.php" method="POST" name="frm_main" id="frm_main">
+		<table>          
+            <tr>
+                <td width="50%"><strong><label id="tienda" name="tienda"><?php echo $titulo_sucursal ?></label></strong></td>
+                <td width="50%"><strong>Fecha</strong><input type="text" id="fecha" name="fecha" size="15" value="<?php echo $fecha ?>"  onchange="document.getElementById('frm_main').submit()"></td>
+            </tr> 
+         </table>
+         <input type="hidden" id="s" name="s" value="<?php echo $s ?>">
+         <input type="hidden" id="sucursal" name="sucursal" value="<?php echo $sucursal ?>">
+</form>         
+</div>
 
 <form action="" method="POST" name="frm_diario" id="frm_diario">
     <div class="grid_24 ui-state-highlight ui-corner-all" style="margin-top: 10px; margin-bottom: 10px; padding: 0.9em;">
-    <div class="grid_9 alpha">
- 
-   <table>
-        <tr>
-            <th width="50%">TIENDA</th>
-<?php 
-// !Referencia productos 
-$fecha=date('Y-m-d');
-for ($dias=4;$dias>=0;$dias--) {
-?>
-            <th width="10%"><?php echo date("d/m", strtotime("$fecha -$dias day")); ?></th>
-<?php            
-} // end for  
-?>         
-        </tr>
- <?php
- $sql="SELECT * FROM inf_sucursales ORDER BY codigo";
- $rs=  mysql_query($sql,$db);
- while ($row=mysql_fetch_object($rs)) {
- ?>
-        <tr onMouseOut="this.style.background='#ECECEC'; this.style.color='black';" onMouseOver="this.style.background='#80AEA4'; this.style.color='white';">
-            <td><?php echo $row->nombre ?></td>
-<?php
-            for ($dias=4;$dias>=0;$dias--) {
-                $fecha_aux = date("Y-m-d", strtotime("$fecha -$dias day"));
-                $sql="SELECT * FROM data_diario WHERE fecha = '$fecha_aux' AND sucursal = $row->id_sucursal";
-                $rs_aux=mysql_query($sql,$db);
-                if (mysql_num_rows($rs_aux) > 0) {
-                    $aux = '<ul id="icons" class="ui-widget ui-helper-clearfix">
-                  <li class="ui-state-default ui-corner-all" title=".ui-icon-check"><span class="ui-icon ui-icon-check"></span></li>
-                </ul> ';
-                } else {
-                    $aux = '';
-                }
-?>              
-            <td>
-              <?php echo $aux ?>     
-            </td>
-    <?php
-            } // end for
-    ?>                
-        </tr>
- <?php       
- }
- ?>
-    </table>
-</div>
-    <div class="grid_9">      
-<?php
-// !Cortes
-?>
-        <table>
-            <tr>
-                <th colspan="2">CORTES</th>
-            </tr>
-            <tr>
-                <td width="70%"><strong>RECIBE</strong></td>
-                <td width="30%"><strong>MONTO</strong></td>
-            </tr>
-<?php
-for ($i=0;$i<3;$i++) {
-?>            
-            <tr>
-                <td width="70%"><input type="text" size="30" name="cortes_txt_<?php echo $i ?>" id="cortes_txt_<?php echo $i ?>"></td>
-                <td width="30%"><input type="text" size="6" name="cortes_qty_<?php echo $i ?>" id="cortes_qty_<?php echo $i ?>" value="0" onChange="validar_extras('cortes')"></td>
-            </tr>
-<?php
-} // end for
-?>            
-            <tr>
-                <td>TOTAL</td>
-                <th><label id="total_cortes">&nbsp;</label></th>
-            </tr>
-        </table>
-<?php
-// !Reventas
-?>
-        <table>
-            <tr>
-                <th colspan="2">REVENTAS</th>
-            </tr>
-            <tr>
-                <td width="70%"><strong>RECIBE</strong></td>
-                <td width="30%"><strong>MONTO</strong></td>
-            </tr>
-<?php
-for ($i=0;$i<3;$i++) {
-?>            
-            <tr>
-                <td width="70%"><input type="text" size="30" name="reventas_txt_<?php echo $i ?>" id="reventas_txt_<?php echo $i ?>"></td>
-                <td width="30%"><input type="text" size="6" name="reventas_qty_<?php echo $i ?>" id="reventas_qty_<?php echo $i ?>" value="0" onChange="validar_extras('reventas')"></td>
-            </tr>
-<?php
-} // end for
-?>         
-            <tr>
-                <td>TOTAL</td>
-                <th><label id="total_reventas">&nbsp;</label></th>
-            </tr>
-        </table>
-<?php
-// !Otros
-?>        
-        <table>
-            <tr>
-                <th colspan="2">OTROS</th>
-            </tr>
-            <tr>
-                <td width="70%"><strong>RECIBE</strong></td>
-                <td width="30%"><strong>MONTO</strong></td>
-            </tr>
- <?php
-for ($i=0;$i<3;$i++) {
-?>            
-            <tr>
-                <td width="70%"><input type="text" size="30" name="otros_txt_<?php echo $i ?>" id="otros_txt_<?php echo $i ?>"></td>
-                <td width="30%"><input type="text" size="6" name="otros_qty_<?php echo $i ?>" id="otros_qty_<?php echo $i ?>" value="0" onChange="validar_extras('otros')"></td>
-            </tr>
-<?php
-} // end for
-?>                  <tr>
-                <td>TOTAL</td>
-                <th><label id="total_otros">&nbsp;</label></th>
-            </tr>
-        </table>
-<?php
-// !Informacion general
-?>
-        
-    </div>
-    <div class="grid_6 omega">
-        <table>
-            <tr>
-                <td><label for="fecha">Fecha</label></td>
-                <td><input type="text" id="fecha" name="fecha" size="15"></td>
-            </tr>
-            <tr>
-                <td><label for="tienda">Tienda</label></td>
-                <td><input type="text" id="txt_tienda" name="txt_tienda" size="15"></td>
-            </tr> 
-            <tr>
-                <td><label for="vendedora">Vendedora</label></td>
-                <td><input type="text" id="txt_vendedora" name="txt_vendedora" size="15"></td>
-            </tr>        
-            
-        </table>
- <?php
-// !Arqueo de efectivo
-?>
-       
-        <table>
-            <tr>
-                <th colspan="3">MONEDA</th>
-            </tr>
-            <tr>
-                <td><label for="doscientos">Q.200</label></td>
-                <td><input type="text" size="3" name="txt_doscientos" id="txt_doscientos" value="0" onChange="sumar_arqueo('doscientos')"></td>
-                <td><label id="lbl_doscientos">&nbsp;</label></td>
-            </tr>
-            <tr>
-                <td><label for="cien">Q.100</label></td>
-                <td><input type="text" size="3" name="txt_cien" id="txt_cien" value="0" onChange="sumar_arqueo('cien')"></td>
-                <td><label id="lbl_cien">&nbsp;</label></td>
-            </tr>
-            <tr>
-                <td><label for="cincuenta">Q.50</label></td>
-                <td><input type="text" size="3" name="txt_cincuenta" id="txt_cincuenta" value="0" onChange="sumar_arqueo('cincuenta')"></td>
-                <td><label id="lbl_cincuenta">&nbsp;</label></td>
-            </tr>
-                       <tr>
-                <td><label for="veinte">Q.20</label></td>
-                <td><input type="text" size="3" name="txt_veinte" id="txt_veinte" value="0" onChange="sumar_arqueo('veinte')"></td>
-                <td><label id="lbl_veinte">&nbsp;</label></td>
-            </tr>
-                       <tr>
-                <td><label for="diez">Q.10</label></td>
-                <td><input type="text" size="3" name="txt_veinte" id="txt_diez" value="0" onChange="sumar_arqueo('diez')"></td>
-                <td><label id="lbl_veinte">&nbsp;</label></td>
-            </tr>
-                       <tr>
-                <td><label for="cinco">Q.5</label></td>
-                <td><input type="text" size="3" name="txt_cinco" id="txt_cinco" value="0" onChange="sumar_arqueo('cinco')"></td>
-                <td><label id="lbl_cinco">&nbsp;</label></td>
-            </tr>
-                       <tr>
-                <td><label for="uno">Q.1</label></td>
-                <td><input type="text" size="3" name="txt_uno" id="txt_uno" value="0" onChange="sumar_arqueo('uno')"></td>
-                <td><label id="lbl_uno">&nbsp;</label></td>
-            </tr>
-                       <tr>
-                <td><label for="moneda">Moneda</label></td>
-                <td><input type="text" size="3" name="txt_moneda" id="txt_moneda" value="0" onChange="sumar_arqueo('moneda')"></td>
-                <td><label id="lbl_moneda">&nbsp;</label></td>
-            </tr>
-            <tr>
-                <td>TOTAL</td>
-                <th colspan="2"><label id="lbl_total_arqueo">&nbsp;</label></th>                
-            </tr>
-        </table>
+    <div class="grid_9 alpha"><?php include ('segmentos/listadotiendas.php') ?></div>
+    <div class="grid_9"><?php include ('segmentos/datosauxiliares.php') ?></div>
+    <div class="grid_6 omega"><?php include ('segmentos/datosgenerales.php') ?>
  <?php
 // !Boton de ingreso
 ?>
-
         <div align="center"><input type="button" id="btn_ingresar" name="btn_ingresar" value="Ingresar informacion"></div>
     </div>       
 </div>
@@ -271,38 +156,6 @@ for ($i=0;$i<3;$i++) {
 // !Captura de datos principal
 ?>
 
-<div class="grid_24" align="left">
-<table>
-	<tr>
-		<th width="30%">PRODUCTO</td>
-		<th width="10%">INICIAL</td>
-		<th width="10%">ENTRADA</td>				
-		<th width="10%">SALIDA</td>
-		<th width="10%">CAMBIO</td>	
-        <th width="10%">FINAL</td>
-		<th width="10%">VENDIDO</td>
-		<th width="10%">VENTA</td>				
-	  </tr>
-         
-<?php
-$sql="SELECT * FROM inf_productos ORDER BY codigo";
-$rs=mysql_query($sql,$db);
-while ($row=mysql_fetch_object($rs)) {
-?>	
-		<tr>
-		<td width="30%" class="columnaB"><?php echo "$row->codigo - ".utf8_encode($row->descripcion) ?></td>
-		<td width="10%"><input type="text" size="4" name="txt_inicial_<?php echo $row->id_producto ?>" id="txt_inicial_<?php echo $row->id_producto ?>"></td>
-		<td width="10%"><input type="text" size="4" name="txt_entrada_<?php echo $row->id_producto ?>" id="txt_entrada_<?php echo $row->id_producto ?>"></td>				
-		<td width="10%"><input type="text" size="4" name="txt_salida_<?php echo $row->id_producto ?>" id="txt_salida_<?php echo $row->id_producto ?>"></td>
-		<td width="10%"><input type="text" size="4" name="txt_cambio_<?php echo $row->id_producto ?>" id="txt_cambio_<?php echo $row->id_producto ?>"></td>
-		<td width="10%"><input type="text" size="3" name="txt_final_<?php echo $row->id_producto ?>" id="txt_final_<?php echo $row->id_producto ?>"></td>
-        <td width="10%" class="columnaB"><label for="lbl_vendido_<?php echo $row->id_producto ?>">&nbsp;</label></td>
-		<td width="10%" class="columnaB"><label for="lbl_venta_<?php echo $row->id_producto ?>">&nbsp;</label></td>
-  	</tr>
-<?php
-} // end while
-?>	
-</table>
-</div>
+<div class="grid_24" align="left"><?php include('segmentos/listadoproductos.php') ?></div>
 </form>
 	

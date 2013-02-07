@@ -8,7 +8,7 @@ function formatNumber(num,prefix){
    while (regx.test(splitLeft)) {
       splitLeft = splitLeft.replace(regx, '$1' + ',' + '$2');
    }
-   return prefix + splitLeft + splitRight;
+   return prefix + splitLeft + splitRight + ".00";
 }
 
 function unformatNumber(num) {
@@ -76,7 +76,13 @@ function subtotalProducto(i,p) {
     suma-= parseInt(document.getElementById('txt_final_' + i).value);
     
     document.getElementById('lbl_vendido_' + i).innerText = suma;
-    document.getElementById('lbl_venta_' + i).innerText = formatNumber(suma * p,"Q.");    
+    document.getElementById('lbl_venta_' + i).innerText = formatNumber(suma * p,"Q."); 
+    
+    // Actualizo los totales
+    document.getElementById('lbl_sumaInicial').innerText = "----";
+    document.getElementById('lbl_sumaFinal').innerText = "----";
+    document.getElementById('lbl_ventaTotal').innerText = "----";
+
 } // end function
 
 function validarProducto(a,i,p) {      

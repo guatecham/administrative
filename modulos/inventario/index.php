@@ -132,6 +132,11 @@ th, td {
 	background-color: #80AEA4;
 }
 
+.cambio input
+{
+	background-color: red;
+}
+
 </style>
     
 </head>

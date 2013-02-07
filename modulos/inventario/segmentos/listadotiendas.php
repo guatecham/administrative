@@ -17,11 +17,13 @@ for ($dias=4;$dias>=0;$dias--) {
  $rs=  mysql_query($sql,$db);
  while ($row=mysql_fetch_object($rs)) {
  ?>
-        <tr onClick="selTienda('<?php echo $row->nombre ?>','<?php echo $row->id_sucursal ?>','<?php echo date('d/m/Y') ?>')" onMouseOut="this.style.background='#ECECEC'; this.style.color='black';" onMouseOver="this.style.background='#80AEA4'; this.style.color='white';">
-            <td width="50%"><?php echo $row->nombre ?></td>
+        <tr onMouseOut="this.style.background='#ECECEC'; this.style.color='black';" onMouseOver="this.style.background='#80AEA4'; this.style.color='white';">
+            <td width="50%" onClick="selTienda('<?php echo $row->nombre ?>','<?php echo $row->id_sucursal ?>','<?php echo date('d/m/Y') ?>')"><?php echo $row->nombre ?></td>
 <?php
             for ($dias=4;$dias>=0;$dias--) {
-               $fecha_aux = date("Y-m-d", strtotime("$f -$dias day"));
+                $fecha_aux = date("Y-m-d", strtotime("$f -$dias day"));
+                $f_show = explode("-",$fecha_aux);
+                $fecha_show = $f_show[2]."/".$f_show[1]."/".$f_show[0];
                 $sql="SELECT * FROM data_diario WHERE fecha = '$fecha_aux' AND sucursal = $row->id_sucursal";
                 $rs_aux=mysql_query($sql,$db);
                 if (mysql_num_rows($rs_aux) > 0) {
@@ -32,7 +34,7 @@ for ($dias=4;$dias>=0;$dias--) {
                     $aux = '&nbsp;';
                 }
 ?>              
-            <td width="10%">
+            <td width="10%" onClick="selTienda('<?php echo $row->nombre ?>','<?php echo $row->id_sucursal ?>','<?php echo $fecha_show ?>')">
               <?php echo $aux ?>     
             </td>
     <?php

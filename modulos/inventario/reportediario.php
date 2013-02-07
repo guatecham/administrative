@@ -3,7 +3,7 @@ if (isset($_REQUEST["sucursal"])) {
 	$sucursal = $_REQUEST["sucursal"];
 } else {
 	$sucursal = 0;
-	}
+}
 
 if ($sucursal != 0) {
 	$sql="SELECT * FROM inf_sucursales WHERE id_sucursal = $sucursal";
@@ -28,6 +28,7 @@ $rs=mysql_query($sql,$db);
 $row=mysql_fetch_object($rs);
 if (mysql_num_rows($rs) == 0) { // Se ingresa
 	
+	// !Datos generales, en blanco	
 	$variable = array('VendedorTitular', 'VendedorRotativa'); 
 	foreach ($variable as $nombre_campo ) {
 		$asignacion = "\$" . $nombre_campo . "='';";
@@ -40,6 +41,7 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 		eval($asignacion); 
 	}
 	
+	// !Datos auxiliares, en blanco	
 	$extra = array ('cortes','reventas','otros');
 	foreach ($extra as $e) {
 		for ($i=0;$i<3;$i++) {
@@ -51,6 +53,7 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 		} // end for
 	} // end foreach
 
+	// !Datos de productos, en blanco
 	$sql="SELECT * FROM inf_productos ORDER BY id_producto";
 	$rs_aux = mysql_query($sql,$db);
 	while ($row_aux = mysql_fetch_object($rs_aux)) {
@@ -65,6 +68,7 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 	
 } else { // Ya existe, se recuperan los datos y se asignan a variables
 
+	// !Datos generales, seleccionado
 	$variable = array('VendedorTitular', 'VendedorRotativa'); 
 	foreach ($variable as $nombre_campo ) {
 		$asignacion = "\$" . $nombre_campo . "=\$"."row->".$nombre_campo.";";
@@ -76,7 +80,8 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 		$asignacion = "\$" . $nombre_campo . "=\$"."row->".$nombre_campo.";";
 		eval($asignacion); 
 	}
-	
+
+	// !Datos auxiliares, seleccionado	
 	for ($t=1;$t<=3;$t++) {
 		$tipo = array('cortes', 'reventas', 'otros');
 		$sql = "SELECT * FROM data_sub2_diario WHERE reporte = $row->id_reporte AND tipo = $t";
@@ -101,10 +106,10 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 				//echo $asignacion."<br>";
 				eval($asignacion); 
 			} // end for	
-		} // end if-else	
-		
+		} // end if-else			
 	} // end for
 	
+	// !Datos de producto, seleccionado
 	$sql="SELECT * FROM inf_productos ORDER BY id_producto";
 	$rs_aux = mysql_query($sql,$db);
 	while ($row_aux = mysql_fetch_object($rs_aux)) {
@@ -126,12 +131,14 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 } // end if
 ?>
 <script type="text/javascript" src="comun/funciones.js"></script>
+<script type="text/javascript" src="comun/validaciones.js"></script>
+
 <div class="grid_24 ui-state-highlight ui-corner-all" style="margin-top: 10px; margin-bottom: 10px; padding: 0.9em;">
 <form action="index.php" method="POST" name="frm_main" id="frm_main">
 		<table>          
             <tr>
                 <td width="50%"><strong><label id="tienda" name="tienda"><?php echo $titulo_sucursal ?></label></strong></td>
-                <td width="50%"><strong>Fecha</strong><input type="text" id="fecha" name="fecha" size="15" value="<?php echo $fecha ?>"  onchange="document.getElementById('frm_main').submit()"></td>
+                <td width="50%"><strong>Fecha</strong><input type="text" id="fecha" name="fecha" size="15" value="<?php echo $fecha ?>"  onchange="document.getElementById('frm_main').submit();"></td>
             </tr> 
          </table>
          <input type="hidden" id="s" name="s" value="<?php echo $s ?>">
@@ -139,7 +146,7 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 </form>         
 </div>
 
-<form action="" method="POST" name="frm_diario" id="frm_diario">
+<form action="scripts/adddiario.php" method="POST" name="frm_diario" id="frm_diario">
     <div class="grid_24 ui-state-highlight ui-corner-all" style="margin-top: 10px; margin-bottom: 10px; padding: 0.9em;">
     <div class="grid_9 alpha"><?php include ('segmentos/listadotiendas.php') ?></div>
     <div class="grid_9"><?php include ('segmentos/datosauxiliares.php') ?></div>
@@ -147,8 +154,12 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
  <?php
 // !Boton de ingreso
 ?>
-        <div align="center"><input type="button" id="btn_ingresar" name="btn_ingresar" value="Ingresar informacion"></div>
-    </div>       
+		<input type="hidden" id="tienda" name="tienda" value="<?php echo $sucursal ?>">
+		<input type="hidden" id="fecha" name="fecha" value="<?php echo $fechaSQL ?>">
+        <div align="center"><input type="button" id="btn_ingresar" name="btn_ingresar" value="Ingresar informacion" onclick="validarHojaDiario('<?php echo $titulo_sucursal ?>','<?php echo $fecha ?>')"></div>
+        <p>&nbsp;</p>
+        <div align="center"><input type="button" id="btn_cancelar" name="btn_cancelar" value="Cancelar ingreso" onClick="window.location.reload()"></div>
+   </div>       
 </div>
 <div class="clearfix"></div>
 

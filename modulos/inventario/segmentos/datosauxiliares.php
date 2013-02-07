@@ -20,8 +20,8 @@ for ($i=0;$i<3;$i++) {
 	$subtotal+=$aux1;
 ?>            
             <tr>
-                <td width="70%"><input type="text" size="30" name="cortes_txt_<?php echo $i ?>" id="cortes_txt_<?php echo $i ?>" value="<?php echo $aux0 ?>"></td>
-                <td width="30%"><input type="text" size="6" name="cortes_qty_<?php echo $i ?>" id="cortes_qty_<?php echo $i ?>" value="<?php echo number_format($aux1,0) ?>" onChange="validar_extras('cortes')"></td>
+                <td width="70%"><input type="text" size="30" name="cortes_txt_<?php echo $i ?>" id="cortes_txt_<?php echo $i ?>" value="<?php echo $aux0 ?>" onChange="this.style.backgroundColor='#FCEFA1';"></td>
+                <td width="30%"><input type="text" size="6" name="cortes_qty_<?php echo $i ?>" id="cortes_qty_<?php echo $i ?>" value="<?php echo number_format($aux1,0) ?>" onChange="validar_extras('cortes'); this.style.backgroundColor='#FCEFA1';"></td>
             </tr>
 <?php
 } // end for
@@ -53,8 +53,8 @@ for ($i=0;$i<3;$i++) {
 	$subtotal+=$aux1;
 ?>            
             <tr>
-                <td width="70%"><input type="text" size="30" name="reventas_txt_<?php echo $i ?>" id="reventas_txt_<?php echo $i ?>" value="<?php echo $aux0 ?>"></td>
-                <td width="30%"><input type="text" size="6" name="reventas_qty_<?php echo $i ?>" id="reventas_qty_<?php echo $i ?>" value="<?php echo number_format($aux1,0) ?>" onChange="validar_extras('reventas')"></td>
+                <td width="70%"><input type="text" size="30" name="reventas_txt_<?php echo $i ?>" id="reventas_txt_<?php echo $i ?>" value="<?php echo $aux0 ?>" onChange="this.style.backgroundColor='#FCEFA1';"></td>
+                <td width="30%"><input type="text" size="6" name="reventas_qty_<?php echo $i ?>" id="reventas_qty_<?php echo $i ?>" value="<?php echo number_format($aux1,0) ?>" onChange="validar_extras('reventas'); this.style.backgroundColor='#FCEFA1';"></td>
             </tr>
 <?php
 } // end for
@@ -86,8 +86,8 @@ for ($i=0;$i<3;$i++) {
 	$subtotal+=$aux1;
 ?>            
             <tr>
-                <td width="70%"><input type="text" size="30" name="otros_txt_<?php echo $i ?>" id="otros_txt_<?php echo $i ?>" value="<?php echo $aux0 ?>"></td>
-                <td width="30%"><input type="text" size="6" name="otros_qty_<?php echo $i ?>" id="otros_qty_<?php echo $i ?>" value="<?php echo number_format($aux1,0) ?>" onChange="validar_extras('otros')"></td>
+                <td width="70%"><input type="text" size="30" name="otros_txt_<?php echo $i ?>" id="otros_txt_<?php echo $i ?>" value="<?php echo $aux0 ?>" onChange="this.style.backgroundColor='#FCEFA1';" ></td>
+                <td width="30%"><input type="text" size="6" name="otros_qty_<?php echo $i ?>" id="otros_qty_<?php echo $i ?>" value="<?php echo number_format($aux1,0) ?>" onChange="validar_extras('otros'); this.style.backgroundColor='#FCEFA1';"></td>
             </tr>
 <?php
 } // end for

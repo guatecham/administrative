@@ -1,34 +1,35 @@
-<?php
-// !Informacion general
+<! autocomplete>
+<link rel="stylesheet" href="autocomplete.css" />
+<script src="autocomplete.js"></script>
+<! autocomplete>
 
-if ($VendedorTitular != '') {
-	$sql="SELECT * FROM inf_personal WHERE id_empleado = $VendedorTitular";	
-	$rs=mysql_query($sql,$db);
-	$row=mysql_fetch_object($rs);
-	$show_vendedorTitular = $row->nombre;
-} else {
-	$show_vendedorTitular = "";
-}
-
-if ($VendedorRotativa != '') {
-	$sql="SELECT * FROM inf_personal WHERE id_empleado = $VendedorRotativa";
-	$rs=mysql_query($sql,$db);
-	$row=mysql_fetch_object($rs);
-	$show_vendedorRotativa = $row->nombre;
-} else {
-	$show_vendedorRotativa = "";
-}
-?>
         <table>          
             <tr>
                 <td><label for="vendedora">Vendedora</label></td>
-                <td><input type="text" id="txt_vendedora" name="txt_vendedora" size="15" value="<?php echo $show_vendedorTitular ?>" onChange="this.style.backgroundColor='#FCEFA1';"></td>
-            </tr> 
+                <td>&nbsp;</td>
+            </tr>     
             <tr>
-                <td><label for="rotativa">Rotativa</label></td>
-                <td><input type="text" id="txt_rotativa" name="txt_rotativa" size="15" value="<?php echo $show_vendedorTitular ?>" onChange=" this.style.backgroundColor='#FCEFA1';"></td>
-            </tr>        
-            
+                <td colspan="2">
+  <select id="combobox" name="combobox">
+    <option value="">Seleccione...</option>
+  
+ <?php
+ $sql="SELECT * FROM inf_personal ORDER BY nombre";
+ $rs=mysql_query($sql,$db);
+ while ($row=mysql_fetch_object($rs)) {
+ 	if ($row->id_empleado == $VendedorTitular) {
+	 	$s= 'selected="selected"';
+ 	} else {
+	 	$s = "";
+ 	}
+ ?>   
+	 <option <?php echo $s ?> value="<?php echo $row->nombre ?>"><?php echo $row->nombre?></option>
+ <?php
+ }  // end while
+ ?>
+  </select>
+                </td>
+            </tr> 
         </table>
  <?php
 // !Arqueo de efectivo

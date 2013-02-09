@@ -27,7 +27,7 @@ $hasta_consulta = $aux[2]."-".$aux[1]."-".$aux[0];
 <input type="text" id="desde" name="desde" value="<?php echo $desde ?>" onChange="document.getElementById('frm_rango').submit()" />
 <label for="hasta">Hasta</label>
 <input type="text" id="hasta" name="hasta" value="<?php echo $hasta ?>" onChange="document.getElementById('frm_rango').submit()" />
-<input type="hidden" id="seleccion" name="seleccion" value="<?php echo $menu_seleccion ?>">
+<input type="hidden" id="seleccion" name="seleccion" value="<?php echo $active ?>">
 </form>
 </div>
 <div class="clear"></div>

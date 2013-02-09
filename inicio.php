@@ -6,6 +6,7 @@ if (isset($_REQUEST["seleccion"])) {
 } else {
 	$active = 0;
 } 
+
 ?>
 <!doctype html>
 <html lang="us">

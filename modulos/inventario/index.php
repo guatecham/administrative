@@ -20,6 +20,8 @@ if (isset($_REQUEST["s"])) {
 	<link rel="stylesheet" href="../../css/960_24_col.css" />
 	<! /960gs>
 	
+        <link rel="stylesheet" href="../../css/aux.css" />
+        
 	<link href="../../jquery/css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet">
 	
 	<script src="../../jquery/js/jquery-1.9.0.js"></script>

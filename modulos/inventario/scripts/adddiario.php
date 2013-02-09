@@ -6,14 +6,14 @@ foreach($_POST as $nombre_campo => $valor)
 {
 	$asignacion = "$" . $nombre_campo . "='" . $valor . "';";
 	eval($asignacion);
+//	echo $asignacion."<br>";
 }
 
 // Encuentro los id's de Vendedor titular y rotativa
-$sql="SELECT * FROM inf_personal WHERE nombre LIKE '$txt_vendedora'";
+$sql="SELECT * FROM inf_personal WHERE nombre LIKE '$combobox'";
 $rs=mysql_query($sql,$db);
 if (mysql_num_rows($rs) == 0) { // No existe, hay que ingresarlo
-	$sql="INSERT INTO inf_personal SET nombre = '$txt_vendedora'";
-	echo $sql;
+	$sql="INSERT INTO inf_personal SET nombre = '$combobox'";
 	$rs=mysql_query($sql,$db);
 	$idVendedorTitular = mysql_insert_id();
 } else {
@@ -21,25 +21,15 @@ if (mysql_num_rows($rs) == 0) { // No existe, hay que ingresarlo
  	$idVendedorTitular = $row->id_empleado;
 }
 
-$sql="SELECT * FROM inf_personal WHERE nombre LIKE '$txt_rotativa'";
-$rs=mysql_query($sql,$db);
-if (mysql_num_rows($rs) > 0) {
-	$row=mysql_fetch_object($rs);
-	$idVendedorRotativa = $row->id_empleado;
-} else {
-	$idVendedorRotativa = 0;
-}
-
 $sql="SELECT * FROM data_diario WHERE fecha = '$fecha' AND sucursal = '$tienda'";
 $rs=mysql_query($sql,$db);
 if (mysql_num_rows($rs) > 0) { // Ya existe, se modifica
 	$sql = "UPDATE data_diario SET ";
 } else { // No existe, se ingresa.
-	$sql = "INSERT INTO data_diario SET ";
+	$sql = "INSERT INTO data_diario SET fecha = '$fecha', sucursal = '$tienda', ";
 }
 
 $sql.="VendedorTitular = $idVendedorTitular, ";
-$sql.="VendedorRotativa = $idVendedorRotativa, ";
 $sql.="BilleteDoscientos=$txt_doscientos, ";
 $sql.="BilleteCien=$txt_cien, ";
 $sql.="BilleteCincuenta=$txt_cincuenta, ";
@@ -58,7 +48,7 @@ $rs=mysql_query($sql,$db);
 
 // Encuentro el numero de reporte
 $sql="SELECT * FROM data_diario WHERE fecha = '$fecha' AND sucursal = $tienda";
-$rs=mysql_query($sql,$db);
+$rs=mysql_query($sql);
 $row=mysql_fetch_object($rs);
 $id_reporte = $row->id_reporte;
 
@@ -126,6 +116,6 @@ while ($row=mysql_fetch_object($rs)) {
     	
 } // end while
 
-header("Location: ../index.php");
+header("Location: ../index.php"); 
 ?>
 

@@ -16,9 +16,16 @@ for ($dias=4;$dias>=0;$dias--) {
  $sql="SELECT * FROM inf_sucursales ORDER BY codigo";
  $rs=  mysql_query($sql,$db);
  while ($row=mysql_fetch_object($rs)) {
+     if ($row->id_sucursal == $sucursal) {
+         $formato ="titulo_sucursal";
+     } else {
+         $formato = "listado_sucursales";
+     }
  ?>
         <tr onMouseOut="this.style.background='#ECECEC'; this.style.color='black';" onMouseOver="this.style.background='#80AEA4'; this.style.color='white';">
-            <td width="50%" onClick="selTienda('<?php echo $row->nombre ?>','<?php echo $row->id_sucursal ?>','<?php echo date('d/m/Y') ?>')"><?php echo $row->nombre ?></td>
+            <td width="50%" onClick="selTienda('<?php echo $row->nombre ?>','<?php echo $row->id_sucursal ?>','<?php echo date('d/m/Y') ?>')">
+                <div class="<?php echo $formato ?>"><?php echo $row->nombre ?></div>
+            </td>
 <?php
             for ($dias=4;$dias>=0;$dias--) {
                 $fecha_aux = date("Y-m-d", strtotime("$f -$dias day"));

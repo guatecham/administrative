@@ -137,7 +137,7 @@ if (mysql_num_rows($rs) == 0) { // Se ingresa
 <form action="index.php" method="POST" name="frm_main" id="frm_main">
 		<table>          
             <tr>
-                <td width="50%"><strong><label id="tienda" name="tienda"><?php echo $titulo_sucursal ?></label></strong></td>
+                <td width="50%"><label id="tienda" name="tienda" class="titulo_sucursal"><?php echo $titulo_sucursal ?></label></td>
                 <td width="50%"><strong>Fecha</strong><input type="text" id="fecha" name="fecha" size="15" value="<?php echo $fecha ?>"  onchange="document.getElementById('frm_main').submit();"></td>
             </tr> 
          </table>
